@@ -1,2 +1,2 @@
 # shiny-examples
-It solves mastering shiny's excersices
+It solves excercises from the book [**Mastering Shiny**] (https://mastering-shiny.org/)
