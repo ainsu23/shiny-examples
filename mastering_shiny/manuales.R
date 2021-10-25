@@ -1,10 +1,10 @@
 
-source("global.R")
-
+source("../global.R")
 
 ui <- fluidPage(
   theme = bslib::bs_theme(bootswatch = "flatly"),
-  titlePanel("Mastering Shiny excercises solutions"),
+  h4(content(temperatura)),
+  titlePanel("What have I learned from Mastering Shiny?"),
   sidebarLayout(
     sidebarPanel(
       selectInput(
@@ -22,11 +22,11 @@ ui <- fluidPage(
 server <- function(input, output, server) {
   updateSelectInput(
     inputId = "chapter",
-    choices = dir("mastering_shiny", pattern = "chapter")
+    choices = dir(pattern = "chapter")
   )
 
   output$manuales <- renderUI({
-    includeMarkdown(paste0("mastering_shiny/man/", input$chapter, ".md"))
+    includeMarkdown(paste0("man/", input$chapter, ".md"))
   })
 }
 shiny::shinyApp(ui, server)
