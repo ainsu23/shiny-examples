@@ -20,5 +20,5 @@ server3 <- function(input, output, server) {
 }
 
 shiny::shinyApp(ui, server1)
-shiny::shinyApp(ui, server2)
-shiny::shinyApp(ui, server3)
+# shiny::shinyApp(ui, server2)
+# shiny::shinyApp(ui, server3)
