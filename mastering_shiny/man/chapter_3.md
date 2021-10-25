@@ -2,4 +2,5 @@
 
 ## What I learned?
 
-Reactive function help to reduce __repetitive code__.
+- If your code repeats more than once in Shiny, conside to use __repetitive code__.
+- **EventReactive** helps to is a reactiveValue that is updated when something happens.
