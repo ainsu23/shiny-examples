@@ -11,22 +11,18 @@ ui <- fluidPage(
         inputId = "chapter",
         label = "select chapter",
         choices = "chapter_1"
+      ),
+      selectInput(
+        inputId = "excercises",
+        label = "select excercise",
+        choices = "excercise_1"
       )
     ),
     mainPanel(
-      uiOutput("manuales")
+      uiOutput("manuales"),
+      tags$br(),
+      tags$hr(),
+      uiOutput("chapters")
     )
   )
 )
-
-server <- function(input, output, server) {
-  updateSelectInput(
-    inputId = "chapter",
-    choices = dir(pattern = "chapter")
-  )
-
-  output$manuales <- renderUI({
-    includeMarkdown(paste0("man/", input$chapter, ".md"))
-  })
-}
-shiny::shinyApp(ui, server)
