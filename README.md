@@ -1,7 +1,7 @@
 # shiny-examples
 It contains shiny aplications made by myself. 
 
-1. [Mastering_shiny](https://afinsuasty.shinyapps.io/mastering_shiny/):
+[ x ]. [Mastering_shiny](https://afinsuasty.shinyapps.io/mastering_shiny/):
 ![image](https://user-images.githubusercontent.com/68567650/144729998-6ec58ed7-b8ae-474f-9820-0a9258037434.png)
 
   - Hosted on shinyapps.io
