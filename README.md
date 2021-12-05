@@ -1,4 +1,10 @@
 # shiny-examples
-It contains shiny examples made by time 
+It contains shiny aplications made by myself. 
 
-1. mastering_shiny: I solved excercises from the book **[Mastering Shiny](https://mastering-shiny.org/)** and displayed in one app with the use of modules.
+1. [Mastering_shiny](https://afinsuasty.shinyapps.io/mastering_shiny/):
+![image](https://user-images.githubusercontent.com/68567650/144729998-6ec58ed7-b8ae-474f-9820-0a9258037434.png)
+
+  - Hosted on shinyapps.io
+  - Solves excercises from the book **[Mastering Shiny](https://mastering-shiny.org/)** 
+  - Display diferent excercises from diferent chapters in one app with the use of modules.
+
