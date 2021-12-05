@@ -8,3 +8,4 @@ It contains shiny aplications made by myself.
   - Solves excercises from the book **[Mastering Shiny](https://mastering-shiny.org/)** 
   - Display different excercises from all chapters in one app with the use of modules and others strategies learned with this book.
 
+- [] bingo in R: This app contains a easy way to play bingo with friends
