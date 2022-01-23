@@ -41,6 +41,7 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
+
   init("actualizar_dt")
 
   updateSelectInput(

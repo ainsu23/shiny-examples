@@ -55,5 +55,3 @@ select_categories <- function() {
 
   return(categories)
 }
-
-
