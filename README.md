@@ -8,7 +8,7 @@ It contains shiny aplications made by myself.
   - Solves excercises from the book **[Mastering Shiny](https://mastering-shiny.org/)** 
   - Display different excercises from all chapters in one app with the use of modules and others strategies learned with this book.
 
-- [x] [Learning Polish](https://afinsuasty.shinyapps.io/learning_polish/):
+- [x] [Learning Polish](https://afinsuasty.shinyapps.io/learning_polish/): This app connects with firebase trougth an API and use of httr. Any person add polish words in order I continues learning polish. Thank you :)
 ![image](https://user-images.githubusercontent.com/68567650/150702004-97d0bf81-bf51-4015-95e2-b79e3881cc68.png)
 
 
