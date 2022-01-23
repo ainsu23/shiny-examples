@@ -1,14 +1,6 @@
-box::use(
-  shiny[...],
-  DT[DTOutput, renderDT],
-  data.table[data.table],
-  httr[GET, content],
-  magrittr[`%>%`],
-  tidyr[separate],
-  R / firebase,
-  R / join_words,
-  gargoyle[init, watch, trigger]
-)
+source("R/firebase.R")
+source("R/join_words.R")
+source("dependencies.R")
 
 ui <- fluidPage(
   theme = bslib::bs_theme(bootswatch = "flatly"),
@@ -41,25 +33,24 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-
   init("actualizar_dt")
 
   updateSelectInput(
     inputId = "topic",
-    choices = names(firebase$select_categories())
+    choices = names(select_categories())
   )
 
   output$words <- renderDT({
-    data.frame(words = firebase$select_words(input$topic)) %>%
+    data.frame(words = select_words(input$topic)) %>%
       separate(words, c("words", "translation"), ":")
   }) %>%
     bindEvent(watch("actualizar_dt"), input$topic)
 
 
   observe({
-    firebase$add_words(
+    add_words(
       categories = input$topic,
-      word = join_words$join_words(input$new_word, input$translation)
+      word = join_words(input$new_word, input$translation)
     )
     trigger("actualizar_dt")
   }) %>%
