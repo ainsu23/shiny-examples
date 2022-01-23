@@ -9,7 +9,7 @@ It contains shiny aplications made by myself.
   - Display different excercises from all chapters in one app with the use of modules and others strategies learned with this book.
 
 - [x] [Learning Polish](https://afinsuasty.shinyapps.io/learning_polish/):
-![image](![image](https://user-images.githubusercontent.com/68567650/150702004-97d0bf81-bf51-4015-95e2-b79e3881cc68.png)
+![image](https://user-images.githubusercontent.com/68567650/150702004-97d0bf81-bf51-4015-95e2-b79e3881cc68.png)
 
 
 - [ ] bingo in R: This app contains a easy way to play bingo with friends
