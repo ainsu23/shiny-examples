@@ -1,2 +1,7 @@
 library(shiny)
-library(box)
+library(DT)
+library(data.table)
+library(httr)
+library(magrittr)
+library(tidyr)
+library(gargoyle)
