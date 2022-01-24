@@ -42,7 +42,7 @@ server <- function(input, output, session) {
 
   output$words <- renderDT({
     data.frame(words = select_words(input$topic)) %>%
-      separate(words, c("words", "translation"), ":")
+      separate(words, c("words", "translation","date_added"), ":")
   }) %>%
     bindEvent(watch("actualizar_dt"), input$topic)
 

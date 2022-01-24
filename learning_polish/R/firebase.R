@@ -1,10 +1,3 @@
-box::use(
-  httr[content, POST, GET, PUT],
-  jsonlite[toJSON],
-  purrr[flatten],
-  magrittr[`%>%`]
-)
-
 #' @title add player
 #' @description add a player within a session specified
 #' @param session_url character contains url of the session to include player
@@ -35,7 +28,7 @@ select_words <- function(categories) {
   words <- content(GET(
     paste0(Sys.getenv("FIREBASE_URL"), "/words/", categories, ".json")
   )) %>%
-    flatten() %>%
+    purrr::flatten() %>%
     unlist()
 
   return(words)
@@ -50,8 +43,8 @@ select_words <- function(categories) {
 select_categories <- function() {
   categories <- content(GET(
     paste0(Sys.getenv("FIREBASE_URL"), "/words/.json")
-  )) 
-    
+  ))
+
 
   return(categories)
 }
