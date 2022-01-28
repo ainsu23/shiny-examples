@@ -1,6 +1,7 @@
 source("R/firebase.R")
 source("R/join_words.R")
 source("dependencies.R")
+source("modules/modal_captcha.R")
 
 ui <- fluidPage(
   theme = bslib::bs_theme(bootswatch = "flatly"),
@@ -34,6 +35,7 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   init("actualizar_dt")
+  init("validated_word")
 
   updateSelectInput(
     inputId = "topic",
@@ -42,7 +44,7 @@ server <- function(input, output, session) {
 
   output$words <- renderDT({
     data.frame(words = select_words(input$topic)) %>%
-      separate(words, c("words", "translation","date_added"), ":")
+      separate(words, c("words", "translation", "date_added"), ":")
   }) %>%
     bindEvent(watch("actualizar_dt"), input$topic)
 
@@ -54,7 +56,10 @@ server <- function(input, output, session) {
     )
     trigger("actualizar_dt")
   }) %>%
-    bindEvent(input$add_word)
+    bindEvent(watch("validated_word"))
+
+
+  captcha_server(input, output)
 }
 
 shiny::shinyApp(ui, server)
