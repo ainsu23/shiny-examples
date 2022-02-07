@@ -54,4 +54,5 @@ captcha_server <- function(input, output) {
       }
     }) %>%
       bindEvent(input$ok)
+  
 }

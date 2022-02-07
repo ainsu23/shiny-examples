@@ -1,3 +1,8 @@
+words_table <- function(categories) {
+  return(data.frame(words = select_words(categories)) %>%
+    separate(words, c("words", "translation", "date_added"), ":"))
+}
+
 #' @title add player
 #' @description add a player within a session specified
 #' @param session_url character contains url of the session to include player
@@ -47,4 +52,31 @@ select_categories <- function() {
 
 
   return(categories)
+}
+
+#' @export
+delete_words <- function(categories, word) {
+  words_delete <- purrr::map(
+    .x = stringr::str_to_lower(word),
+    .f = function(.x) {
+      content(GET(
+        paste0(Sys.getenv("FIREBASE_URL"), "/words/", categories, ".json")
+      )) %>%
+        stringi::stri_trans_tolower(.) %>%
+        unique() %>%
+        stringr::str_starts(.x) %>%
+        which() - 1
+    }
+  )
+
+  purrr::map(
+    .x = words_delete,
+    .f = function(.x) {
+      DELETE(
+        paste0(
+          Sys.getenv("FIREBASE_URL"), "words/", categories, "/", .x, ".json"
+        )
+      )
+    }
+  )
 }
