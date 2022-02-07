@@ -2,6 +2,7 @@ source("R/firebase.R")
 source("R/join_words.R")
 source("dependencies.R")
 source("modules/modal_captcha.R")
+source("modules/delete_words.R")
 
 ui <- fluidPage(
   theme = bslib::bs_theme(bootswatch = "flatly"),
@@ -24,10 +25,14 @@ ui <- fluidPage(
       actionButton(
         inputId = "add_word",
         label = "add"
+      ),
+      actionButton(
+        inputId = "delete_word",
+        label = "delete"
       )
     ),
     mainPanel(
-      DTOutput(outputId = "words"),
+      DTOutput(outputId = "table_words"),
       tags$br()
     )
   )
@@ -35,18 +40,32 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   init("actualizar_dt")
-  init("validated_word")
+  init("validated_word", "password_confirmed")
+
+  words_table_category <- reactive(
+    words_table(input$topic)
+  ) %>%
+    bindEvent(watch("actualizar_dt"), input$topic)
 
   updateSelectInput(
     inputId = "topic",
     choices = names(select_categories())
   )
 
-  output$words <- renderDT({
-    data.frame(words = select_words(input$topic)) %>%
-      separate(words, c("words", "translation", "date_added"), ":")
+  output$table_words <- renderDT({
+    words_table_category()
   }) %>%
     bindEvent(watch("actualizar_dt"), input$topic)
+
+  observe({
+    words_delete <- words_table_category()[
+      input$table_words_rows_selected, "words"
+    ]
+
+    delete_words(input$topic, words_delete)
+    trigger("actualizar_dt")
+  }) %>%
+    bindEvent(watch("password_confirmed"))
 
 
   observe({
@@ -60,6 +79,7 @@ server <- function(input, output, session) {
 
 
   captcha_server(input, output)
+  delete_server(input, output)
 }
 
 shiny::shinyApp(ui, server)
