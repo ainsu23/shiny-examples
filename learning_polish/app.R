@@ -3,37 +3,48 @@ source("R/join_words.R")
 source("dependencies.R")
 source("modules/modal_captcha.R")
 source("modules/delete_words.R")
+source("modules/games.R")
 
 ui <- fluidPage(
   theme = bslib::bs_theme(bootswatch = "flatly"),
   titlePanel("My progress learning polish"),
-  sidebarLayout(
-    sidebarPanel(
-      selectInput(
-        inputId = "topic",
-        label = "select topic",
-        choices = "transport"
-      ),
-      textInput(
-        inputId = "new_word",
-        label = "Add new word"
-      ),
-      textInput(
-        inputId = "translation",
-        label = "translation"
-      ),
-      actionButton(
-        inputId = "add_word",
-        label = "add"
-      ),
-      actionButton(
-        inputId = "delete_word",
-        label = "delete"
+  tags$br(),
+  bslib::navs_tab(
+    nav(
+      title = "vocabulary",
+      sidebarLayout(
+        sidebarPanel(
+          selectInput(
+            inputId = "topic",
+            label = "select topic",
+            choices = "animals"
+          ),
+          textInput(
+            inputId = "new_word",
+            label = "Add new word"
+          ),
+          textInput(
+            inputId = "translation",
+            label = "translation"
+          ),
+          actionButton(
+            inputId = "add_word",
+            label = "add"
+          ),
+          actionButton(
+            inputId = "delete_word",
+            label = "delete"
+          )
+        ),
+        mainPanel(
+          DTOutput(outputId = "table_words"),
+          tags$br()
+        )
       )
     ),
-    mainPanel(
-      DTOutput(outputId = "table_words"),
-      tags$br()
+    nav(
+      title = "games",
+      games_ui("games")
     )
   )
 )
@@ -69,17 +80,20 @@ server <- function(input, output, session) {
 
 
   observe({
-    add_words(
-      categories = input$topic,
-      word = join_words(input$new_word, input$translation)
-    )
-    trigger("actualizar_dt")
+    if (nchar(input$new_word) != 0 & nchar(input$translation) != 0) {
+      add_words(
+        categories = input$topic,
+        word = join_words(input$new_word, input$translation)
+      )
+      trigger("actualizar_dt")
+    }
   }) %>%
     bindEvent(watch("validated_word"))
 
 
   captcha_server(input, output)
   delete_server(input, output)
+  games_server("games")
 }
 
 shiny::shinyApp(ui, server)

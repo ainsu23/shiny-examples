@@ -1,6 +1,6 @@
 words_table <- function(categories) {
   return(data.frame(words = select_words(categories)) %>%
-    separate(words, c("words", "translation", "date_added"), ":"))
+    separate(words, c("words", "translation", "date_added"), ":")) 
 }
 
 #' @title add player
@@ -11,16 +11,18 @@ words_table <- function(categories) {
 #' @example add_player("session/-MnToR4E9IHXAnqj6jS_/03ed5d0c", "Felipe")
 #' @export
 add_words <- function(categories, word) {
-  words <- select_words(categories)
-  body <- toJSON(c(words, word),
-    pretty = TRUE
-  )
+  if(word != "") {
+    words <- select_words(categories)
+    body <- toJSON(c(words, word),
+      pretty = TRUE
+    )
 
 
-  response <- PUT(
-    paste0(Sys.getenv("FIREBASE_URL"), "/words/", categories, ".json"),
-    body = body
-  )
+    response <- PUT(
+      paste0(Sys.getenv("FIREBASE_URL"), "/words/", categories, ".json"),
+      body = body
+    )
+  }
 }
 
 #' @title select players
