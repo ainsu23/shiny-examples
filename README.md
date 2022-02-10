@@ -11,3 +11,5 @@ It contains shiny aplications made by myself.
 - [x] [Learning Polish](https://afinsuasty.shinyapps.io/learning_polish/): This app connects with firebase trougth an API and use of httr. Any person can add polish words, so I can achieve my 2022 goals... learning polish. Thank you :)
 ![image](https://user-images.githubusercontent.com/68567650/150702004-97d0bf81-bf51-4015-95e2-b79e3881cc68.png)
    - In order to validate or authenticate that the person knows polish words, a modal is generated asking for the translation in spanish of a polish word. If it is correct, the adds the new word.
+   - Games section: ![image](https://user-images.githubusercontent.com/68567650/153332045-5368a508-fdd1-4d98-8ae6-a330d8fdc263.png)
+
