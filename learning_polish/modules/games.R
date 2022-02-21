@@ -27,10 +27,10 @@ games_ui <- function(id) {
             options = list(maxItems = 3)
           )
         ),
-          #         shiny::uiOutput(
-          #           outputId = ns("categories"),
-          #           inline = TRUE
-          #         ),
+        #         shiny::uiOutput(
+        #           outputId = ns("categories"),
+        #           inline = TRUE
+        #         ),
         shiny::uiOutput(
           outputId = ns("game_selected"),
           inline = TRUE
@@ -137,7 +137,7 @@ games_server <- function(id) {
             selected = NULL
           )
         } else {
-          show_alert(title = "Not yet", text = "keep trying")
+          show_alert(title = "Not yet", text = "keep trying", type = "error")
         }
       }) %>%
         bindEvent(input$end_game)
