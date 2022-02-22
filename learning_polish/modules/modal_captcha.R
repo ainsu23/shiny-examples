@@ -37,7 +37,7 @@ captcha_server <- function(input, output) {
   observe({
     showModal(dataModal())
   }) %>%
-    bindEvent(input$add_word)
+    bindEvent(input$add_word, once = TRUE)
 
     # When OK button is pressed, attempt to load the data set. If successful,
     # remove the modal. If not show another modal, but this time with a failure

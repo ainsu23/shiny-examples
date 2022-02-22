@@ -50,7 +50,7 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  init("actualizar_dt")
+  init("actualizar_dt", "permission_given")
   init("validated_word", "password_confirmed")
 
   words_table_category <- reactive(
@@ -80,15 +80,23 @@ server <- function(input, output, session) {
 
 
   observe({
-    if (nchar(input$new_word) != 0 & nchar(input$translation) != 0) {
-      add_words(
-        categories = input$topic,
-        word = join_words(input$new_word, input$translation)
-      )
-      trigger("actualizar_dt")
+    print(watch("permission_given"))
+    if (watch("permission_given") == 1) {
+      if (nchar(input$new_word) != 0 & nchar(input$translation) != 0) {
+        add_words(
+          categories = input$topic,
+          word = join_words(input$new_word, input$translation)
+        )
+        trigger("actualizar_dt")
+      }
     }
   }) %>%
-    bindEvent(watch("validated_word"))
+    bindEvent(input$add_word, watch("permission_given"), ignoreInit = TRUE)
+
+  observe({
+    trigger("permission_given")
+  }) %>%
+    bindEvent(watch("validated_word"), ignoreInit = TRUE, once = TRUE)
 
 
   captcha_server(input, output)
