@@ -1,24 +1,31 @@
 
+# Creación de objeto R6 con el fin de contener información y operaciones en un
+# sólo objeto
+# Object R6 created to keep information and make operations within one object
 manager <- R6::R6Class(
   classname = "słowa",
   public = list(
     initialize = function() {
       self$firebase <- select_categories()
-      self$kategorie = data.frame("kategorie" = names(self$firebase)) %>%
+      self$kategorie <- data.frame("kategorie" = names(self$firebase)) %>%
         mutate("wiersza" = row_number())
     },
+    #' @field category stored in firebase
     kategorie = NULL,
+    #' @field firebase contains all information stored in firebase
     firebase = NULL,
+    #' @method wybrana_kategoria return category selected
     wybrana_kategoria = function(topic) {
       filter(self$kategorie, wiersza == topic) %>%
         pull(kategorie)
     },
+    #' @method wybrana_słowa returns table with words of the category selected
     wybrana_słowa = function(wybrana_kategoria) {
       as.data.frame(
-        self$firebase[wybrana_kategoria] %>% unlist() %>% unname(), 
+        self$firebase[wybrana_kategoria] %>% unlist() %>% unname(),
         nm = "words"
       ) %>%
-      tidyr::separate(words, c("words", "translation", "date_added"), ":") 
+        tidyr::separate(words, c("words", "translation", "date_added"), ":")
     }
   )
 )
@@ -31,7 +38,7 @@ manager <- R6::R6Class(
 #' @example add_player("session/-MnToR4E9IHXAnqj6jS_/03ed5d0c", "Felipe")
 #' @export
 add_words <- function(categories, word) {
-  if(word != "") {
+  if (word != "") {
     words <- select_words(categories)
     body <- toJSON(c(words, word),
       pretty = TRUE
@@ -45,9 +52,9 @@ add_words <- function(categories, word) {
   }
 }
 
-#' @title select words 
+#' @title select words
 #' @description select words within a session specified
-#' @return list words 
+#' @return list words
 #' @example select_words("animals")
 #' @export
 select_words <- function(categories) {
@@ -77,6 +84,8 @@ select_categories <- function() {
 
 #' @export
 delete_words <- function(categories, word) {
+  print(categories)
+  print(word)
   words_delete <- purrr::map(
     .x = stringr::str_to_lower(word),
     .f = function(.x) {
