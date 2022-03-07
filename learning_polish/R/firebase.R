@@ -1,7 +1,27 @@
-words_table <- function(categories) {
-  return(data.frame(words = select_words(categories)) %>%
-    separate(words, c("words", "translation", "date_added"), ":")) 
-}
+
+manager <- R6::R6Class(
+  classname = "słowa",
+  public = list(
+    initialize = function() {
+      self$firebase <- select_categories()
+      self$kategorie = data.frame("kategorie" = names(self$firebase)) %>%
+        mutate("wiersza" = row_number())
+    },
+    kategorie = NULL,
+    firebase = NULL,
+    wybrana_kategoria = function(topic) {
+      filter(self$kategorie, wiersza == topic) %>%
+        pull(kategorie)
+    },
+    wybrana_słowa = function(wybrana_kategoria) {
+      as.data.frame(
+        self$firebase[wybrana_kategoria] %>% unlist() %>% unname(), 
+        nm = "words"
+      ) %>%
+      tidyr::separate(words, c("words", "translation", "date_added"), ":") 
+    }
+  )
+)
 
 #' @title add player
 #' @description add a player within a session specified
@@ -25,11 +45,10 @@ add_words <- function(categories, word) {
   }
 }
 
-#' @title select players
-#' @description select players within a session specified
-#' @param session_url character contains url of the session to include player
-#' @return list users
-#' @example select_players("session/-MnToR4E9IHXAnqj6jS_/03ed5d0c")
+#' @title select words 
+#' @description select words within a session specified
+#' @return list words 
+#' @example select_words("animals")
 #' @export
 select_words <- function(categories) {
   words <- content(GET(
