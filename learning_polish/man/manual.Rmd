@@ -1,0 +1,14 @@
+---
+title: "Welcome to my progress learning polish"
+output:
+  html_document:
+    css: "../www/badge.scss"
+---
+
+
+
+<div class='badge'>
+<div class='text'> ’Hola! </div>
+</div>
+
+This app contains two tabs, one for learning with some translation words and the other one has a game where words need to be matched to categories!
