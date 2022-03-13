@@ -1,3 +1,4 @@
+library(dplyr)
 
 # Creación de objeto R6 con el fin de contener información y operaciones en un
 # sólo objeto
@@ -6,36 +7,41 @@ manager <- R6::R6Class(
   classname = "słowa",
   public = list(
     initialize = function() {
-      self$firebase <- select_categories()
-      self$kategorie <- data.frame("kategorie" = names(self$firebase)) %>%
+      private$firebase <- select_categories()
+      self$kategorie <- data.frame("kategorie" = names(private$firebase)) %>%
         mutate("wiersza" = row_number())
     },
     #' @field category stored in firebase
     kategorie = NULL,
-    #' @field firebase contains all information stored in firebase
-    firebase = NULL,
     #' @method wybrana_kategoria return category selected
     wybrana_kategoria = function(topic) {
       filter(self$kategorie, wiersza == topic) %>%
         pull(kategorie)
     },
-    #' @method wybrana_słowa returns table with words of the category selected
+    #' @methodwybrana_słowa returns table with words of the category selected
     wybrana_słowa = function(wybrana_kategoria) {
       as.data.frame(
-        self$firebase[wybrana_kategoria] %>% unlist() %>% unname(),
+        private$firebase[wybrana_kategoria] %>% unlist() %>% unname(),
         nm = "words"
       ) %>%
         tidyr::separate(words, c("words", "translation", "date_added"), ":")
     }
+  ),
+  private = list(
+    #' @field firebase contains all information stored in firebase
+    firebase = NULL
   )
 )
 
-#' @title add player
-#' @description add a player within a session specified
-#' @param session_url character contains url of the session to include player
-#' @param user character username digited by player
-#' @return character user url created
-#' @example add_player("session/-MnToR4E9IHXAnqj6jS_/03ed5d0c", "Felipe")
+words_table <- function(categories) {
+  return(data.frame(words = select_words(categories)) %>%
+    separate(words, c("words", "translation", "date_added"), ":")) 
+}
+
+#' @title add words 
+#' @description add a word within a session specified
+#' @param session_url character contains url of the session to include word 
+#' @example add_words("animals", "kot: ")
 #' @export
 add_words <- function(categories, word) {
   if (word != "") {
@@ -43,7 +49,6 @@ add_words <- function(categories, word) {
     body <- toJSON(c(words, word),
       pretty = TRUE
     )
-
 
     response <- PUT(
       paste0(Sys.getenv("FIREBASE_URL"), "/words/", categories, ".json"),
@@ -67,11 +72,10 @@ select_words <- function(categories) {
   return(words)
 }
 
-#' @title select players
-#' @description select players within a session specified
-#' @param session_url character contains url of the session to include player
-#' @return list users
-#' @example select_players("session/-MnToR4E9IHXAnqj6jS_/03ed5d0c")
+#' @title select categories 
+#' @description select categories within a session specified
+#' @return list categories 
+#' @example select_categories()
 #' @export
 select_categories <- function() {
   categories <- content(GET(
@@ -82,10 +86,12 @@ select_categories <- function() {
   return(categories)
 }
 
+#' @title delete words
+#' @description Deletes as many words as selects
+#' @param categories category where the word would be deleted
+#' @param word word to be deleted
 #' @export
 delete_words <- function(categories, word) {
-  print(categories)
-  print(word)
   words_delete <- purrr::map(
     .x = stringr::str_to_lower(word),
     .f = function(.x) {
