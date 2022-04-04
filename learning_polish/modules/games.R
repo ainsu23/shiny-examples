@@ -8,7 +8,7 @@ games_ui <- function(id) {
         selectInput(
           inputId = ns("games"),
           label = "select game",
-          choices = c("bucket list" = "bucket_list", "meaning" = "meaning"),
+          choices = c("bucket list" = "bucket_list", "guess" = "guess"),
           selected = NULL
         )
       ),
@@ -27,10 +27,23 @@ games_ui <- function(id) {
             options = list(maxItems = 3)
           )
         ),
-        #         shiny::uiOutput(
-        #           outputId = ns("categories"),
-        #           inline = TRUE
-        #         ),
+        conditionalPanel(
+          condition = "input.games == 'guess'",
+          ns = ns,
+          tags$div(
+            class = "row",
+            selectizeInput(
+              inputId = ns("category"),
+              label = "select 1 category",
+              choices = names(select_categories()),
+              multiple = FALSE
+            ),
+            textOutput(ns("text_unsorted")),
+            uiOutput(ns("textos")),
+            uiOutput(ns("msg")),
+            uiOutput(ns("css"))
+          )
+        ),
         shiny::uiOutput(
           outputId = ns("game_selected"),
           inline = TRUE
@@ -51,21 +64,71 @@ games_server <- function(id) {
       ns <- session$ns
 
       bucket_words <- reactiveValues()
+      palabras <- reactive({sample(words_table(input$category)[, "words"],1)})
 
-      #       output$categories <- renderUI({
-      #         tagList(
-      #           tags$hr(),
-      #           tags$br(),
-      #           selectizeInput(
-      #             inputId = ns("categories"),
-      #             label = "select 3 categories",
-      #             choices = names(select_categories()),
-      #             multiple = TRUE,
-      #             options = list(maxItems = 3)
-      #           )
-      #         )
-      #       })
+      linkedList <- reactive({complete_linkedList(palabras())})
 
+      output$text_unsorted <- renderText({
+        stringi::stri_rand_shuffle(palabras())
+      })
+
+      output$textos <- renderUI({
+        tagList(
+          tags$hr(),
+          tags$br(),
+          fluidRow(
+            purrr::map(
+              .x = 1:nchar(palabras()),
+              .f = function(.x) {
+                column(
+                  width = 1,
+                  textInput(
+                    inputId = ns(glue("texto{.x}")),
+                    label = glue("{.x}"),
+                    value = NULL
+                  )
+                )
+              }
+            )
+          )
+        )
+      }) 
+
+      output$msg <- renderUI({
+        tagList(
+          tags$p("Colors representation:"),
+          tags$p("red: letter in position is not correct", class = "red"),
+          tags$p("yellow: letter in position correct, previous or next nodes are not correct",
+            class = "yellow"),
+          tags$p("green: letter in position is correct, next and previous nodes are corrected",
+            class = "green"),
+          tags$style(".red {color: red;}"),
+          tags$style(".yellow {color: #b1b100;}"),
+          tags$style(".green {color: green;}"),
+        )
+      }) %>%
+        bindEvent(input$end_game)
+
+      output$css <- renderUI({
+        purrr::map(
+          .x = 1:nchar(palabras()),
+          .f = function(.x) {
+            color <- change_color(
+              LinkedList = linkedList(),
+              position = .x,
+              .prev = input[[glue("texto{.x - 1}")]],
+              .next = input[[glue("texto{.x + 1}")]],
+              letter = input[[glue("texto{.x}")]]
+            )
+            tags$style(
+              type="text/css", 
+              paste0("#", ns(""),"texto", .x, "-label {color: ", color, ";font-weight: bold}")
+            )
+          }
+        )
+      }) %>%
+        bindEvent(input$end_game)
+        
       output$game_selected <- shiny::renderUI({
         if (length(input$categories) == 3) {
           bucket_words$palabras1 <- words_table(input$categories[1])[, "words"]
@@ -120,16 +183,14 @@ games_server <- function(id) {
           bucket_words$palabras3,
           bucket_words$palabras_game
         )
-        print(palabras3)
-
-        print(input$bucket3)
 
         if (
           sum(input$bucket1 %in% palabras1) == length(palabras1) &
             sum(input$bucket2 %in% palabras2) == length(palabras2) &
             sum(input$bucket3 %in% palabras3) == length(palabras3)
         ) {
-          show_alert(title = "You Won!")
+          if ("input.game" == "bucket_list")
+            show_alert(title = "You Won!")
           updateSelectInput(
             session = session,
             inputId = "categories",

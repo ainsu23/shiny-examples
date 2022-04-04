@@ -6,6 +6,7 @@ source("modules/modal_captcha.R")
 source("modules/landing_page.R")
 source("modules/delete_words.R")
 source("modules/games.R")
+source("R/linked_list.R")
 
 # ui
 ui <- fluidPage(
