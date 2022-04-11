@@ -19,6 +19,8 @@ games_ui <- function(id) {
           ns = ns,
           tags$hr(),
           tags$br(),
+          tags$h4("Choose 3 categories to start play, after that, drag and drop
+            words into each category. When you have finished end the game"),
           selectizeInput(
             inputId = ns("categories"),
             label = "select 3 categories",
@@ -30,15 +32,28 @@ games_ui <- function(id) {
         conditionalPanel(
           condition = "input.games == 'guess'",
           ns = ns,
+          tags$hr(),
+          tags$br(),
+          tags$h4("Guess the word from the category chosen. Tip: Letters are
+              given out of order"),
           tags$div(
             class = "row",
+            tags$br(),
             selectizeInput(
               inputId = ns("category"),
               label = "select 1 category",
               choices = names(select_categories()),
               multiple = FALSE
-            ),
+            )
+          ),
+          tags$div(
+            class = "row",
+            tags$br(),
             textOutput(ns("text_unsorted")),
+            tags$br(),
+          ),
+          tags$div(
+            class = "row",
             uiOutput(ns("textos")),
             uiOutput(ns("msg")),
             uiOutput(ns("css"))
@@ -64,12 +79,16 @@ games_server <- function(id) {
       ns <- session$ns
 
       bucket_words <- reactiveValues()
-      palabras <- reactive({sample(words_table(input$category)[, "words"],1)})
+      palabras <- reactive({
+        sample(words_table(input$category)[, "words"], 1)
+      })
 
-      linkedList <- reactive({complete_linkedList(palabras())})
+      linkedList <- reactive({
+        complete_linkedList(palabras())
+      })
 
       output$text_unsorted <- renderText({
-        stringi::stri_rand_shuffle(palabras())
+        glue::glue("Word unsorted: {stringi::stri_rand_shuffle(palabras())}")
       })
 
       output$textos <- renderUI({
@@ -92,16 +111,18 @@ games_server <- function(id) {
             )
           )
         )
-      }) 
+      })
 
       output$msg <- renderUI({
         tagList(
           tags$p("Colors representation:"),
           tags$p("red: letter in position is not correct", class = "red"),
           tags$p("yellow: letter in position correct, previous or next nodes are not correct",
-            class = "yellow"),
+            class = "yellow"
+          ),
           tags$p("green: letter in position is correct, next and previous nodes are corrected",
-            class = "green"),
+            class = "green"
+          ),
           tags$style(".red {color: red;}"),
           tags$style(".yellow {color: #b1b100;}"),
           tags$style(".green {color: green;}"),
@@ -121,14 +142,14 @@ games_server <- function(id) {
               letter = input[[glue("texto{.x}")]]
             )
             tags$style(
-              type="text/css", 
-              paste0("#", ns(""),"texto", .x, "-label {color: ", color, ";font-weight: bold}")
+              type = "text/css",
+              paste0("#", ns(""), "texto", .x, "-label {color: ", color, ";font-weight: bold}")
             )
           }
         )
       }) %>%
         bindEvent(input$end_game)
-        
+
       output$game_selected <- shiny::renderUI({
         if (length(input$categories) == 3) {
           bucket_words$palabras1 <- words_table(input$categories[1])[, "words"]
@@ -189,8 +210,9 @@ games_server <- function(id) {
             sum(input$bucket2 %in% palabras2) == length(palabras2) &
             sum(input$bucket3 %in% palabras3) == length(palabras3)
         ) {
-          if ("input.game" == "bucket_list")
+          if ("input.game" == "bucket_list") {
             show_alert(title = "You Won!")
+          }
           updateSelectInput(
             session = session,
             inputId = "categories",
