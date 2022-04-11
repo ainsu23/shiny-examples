@@ -6,6 +6,7 @@ source("modules/modal_captcha.R")
 source("modules/landing_page.R")
 source("modules/delete_words.R")
 source("modules/games.R")
+source("modules/grammar.R")
 
 # ui
 ui <- fluidPage(
@@ -70,6 +71,10 @@ ui <- fluidPage(
     nav(
       title = "games",
       games_ui("games")
+    ),
+    nav(
+      title = "grammar",
+      grammar_ui("grammar")
     )
   )
 )
@@ -167,6 +172,7 @@ server <- function(input, output, session) {
   delete_server(input, output)
   games_server("games")
   landing_server(input, output)
+  grammar_server("grammar")
 }
 
 shiny::shinyApp(ui, server)
